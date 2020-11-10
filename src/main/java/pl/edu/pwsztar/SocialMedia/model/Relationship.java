@@ -20,10 +20,10 @@ public class Relationship {
     private String status;
 
     @ManyToOne
-    @JoinColumn
-    private Account user_a;
+    @JoinColumn(name = "user_a")
+    private Account userA;
 
     @ManyToOne
-    @JoinColumn
-    private Account user_b;
+    @JoinColumn(name = "user_b")
+    private Account userB;
 }
