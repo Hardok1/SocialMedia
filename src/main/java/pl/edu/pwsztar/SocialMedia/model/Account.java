@@ -1,9 +1,11 @@
 package pl.edu.pwsztar.SocialMedia.model;
 
 import com.sun.istack.NotNull;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import pl.edu.pwsztar.SocialMedia.dto.AccountDTO;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
@@ -13,6 +15,7 @@ import java.util.Set;
 @Getter
 @Setter
 @NoArgsConstructor
+@AllArgsConstructor
 
 @Entity
 @Table
@@ -40,7 +43,7 @@ public class Account {
     @NotNull
     @Column
     @Temporal(TemporalType.DATE)
-    private Calendar created_at;
+    private Calendar createdAt;
 
     @NotBlank
     @Column
@@ -50,7 +53,7 @@ public class Account {
     @Column
     private String city;
 
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "original_poster")
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "originalPoster")
     private Set<Post> posts;
 
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "author")
@@ -67,6 +70,16 @@ public class Account {
     )
     private Set<Interest> interest;
 
-    @OneToMany(mappedBy = "user_a")
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "user_a")
     private Set<Relationship> relationship;
+
+    public Account(AccountDTO accountDTO){
+        this.login = accountDTO.getLogin();
+        this.password = accountDTO.getPassword();
+        this.forename = accountDTO.getForename();
+        this.surname = accountDTO.getSurname();
+        this.country = accountDTO.getCountry();
+        this.city = accountDTO.getCity();
+        this.interest = accountDTO.getInterests();
+    }
 }

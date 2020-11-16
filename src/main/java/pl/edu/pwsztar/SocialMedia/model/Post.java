@@ -1,6 +1,7 @@
 package pl.edu.pwsztar.SocialMedia.model;
 
 import com.sun.istack.NotNull;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -13,6 +14,7 @@ import java.util.Set;
 @Getter
 @Setter
 @NoArgsConstructor
+@AllArgsConstructor
 
 @Entity
 @Table
@@ -29,11 +31,11 @@ public class Post {
     @NotNull
     @Column
     @Temporal(TemporalType.DATE)
-    private Calendar created_at;
+    private Calendar createdAt;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn
-    private Account original_poster;
+    private Account originalPoster;
 
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "post")
     private Set<Comment> comment;

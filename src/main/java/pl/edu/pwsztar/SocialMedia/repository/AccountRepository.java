@@ -1,12 +1,13 @@
 package pl.edu.pwsztar.SocialMedia.repository;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import pl.edu.pwsztar.SocialMedia.model.Account;
 import pl.edu.pwsztar.SocialMedia.model.Interest;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
-import java.util.List;
 
 public interface AccountRepository extends JpaRepository<Account, Long> {
 
@@ -16,9 +17,15 @@ public interface AccountRepository extends JpaRepository<Account, Long> {
 
     void deleteByLogin(String login);
 
-    List<Account> findAllByCity(@NotBlank String city);
+    Page<Account> findAllByForenameAndSurname(String forename, String surname);
 
-    List<Account> findAllByCountry(@NotBlank String country);
+    Page<Account> findAllByCity(Pageable pageable, @NotBlank String city);
 
-    List<Account> findAllByInterest(@NotNull Interest interest);
+    Page<Account> findAllByCountry(Pageable pageable, @NotBlank String country);
+
+    Page<Account> findAllByInterest(Pageable pageable, @NotNull Interest interest);
+
+    Page<Account> findAllByInterestAndCity(Pageable pageable, @NotNull Interest interest, @NotNull String city);
+
+    Page<Account> findAllByInterestAndCountry(Pageable pageable, @NotNull Interest interest, @NotNull String city);
 }
