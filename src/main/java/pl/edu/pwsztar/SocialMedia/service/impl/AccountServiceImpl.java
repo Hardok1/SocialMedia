@@ -7,7 +7,6 @@ import org.springframework.stereotype.Service;
 import pl.edu.pwsztar.SocialMedia.dto.AccountCredentialsDTO;
 import pl.edu.pwsztar.SocialMedia.dto.AccountDTO;
 import pl.edu.pwsztar.SocialMedia.exception.InvalidCredentialsException;
-import pl.edu.pwsztar.SocialMedia.exception.LoginAlreadyExistException;
 import pl.edu.pwsztar.SocialMedia.model.Account;
 import pl.edu.pwsztar.SocialMedia.model.Interest;
 import pl.edu.pwsztar.SocialMedia.repository.AccountRepository;
@@ -27,7 +26,7 @@ public class AccountServiceImpl implements AccountService {
     }
 
     @Override
-    public boolean createAccount(AccountDTO accountDTO) throws LoginAlreadyExistException {
+    public boolean createAccount(AccountDTO accountDTO) {
         if (accountRepository.existsByLogin(accountDTO.getLogin())) return false;
         Account account = new Account(accountDTO);
         account.setCreatedAt(Calendar.getInstance(TimeZone.getTimeZone("UTC")));
@@ -73,7 +72,7 @@ public class AccountServiceImpl implements AccountService {
 
     @Override
     public Page<Account> findAccountsByName(Pageable pageable, String forename, String surname) {
-        return accountRepository.findAllByForenameAndSurname(forename, surname);
+        return accountRepository.findAllByForenameAndSurname(pageable, forename, surname);
     }
 
     @Override

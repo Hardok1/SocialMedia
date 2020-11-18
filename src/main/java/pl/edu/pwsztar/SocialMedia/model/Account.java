@@ -70,7 +70,7 @@ public class Account {
     )
     private Set<Interest> interest;
 
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "user_a")
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "userA")
     private Set<Relationship> relationship;
 
     public Account(AccountDTO accountDTO){

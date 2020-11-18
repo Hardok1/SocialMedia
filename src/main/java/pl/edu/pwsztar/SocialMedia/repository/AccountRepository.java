@@ -17,7 +17,7 @@ public interface AccountRepository extends JpaRepository<Account, Long> {
 
     void deleteByLogin(String login);
 
-    Page<Account> findAllByForenameAndSurname(String forename, String surname);
+    Page<Account> findAllByForenameAndSurname(Pageable pageable, String forename, String surname);
 
     Page<Account> findAllByCity(Pageable pageable, @NotBlank String city);
 
