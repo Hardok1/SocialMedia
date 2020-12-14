@@ -15,8 +15,6 @@ public interface AccountRepository extends JpaRepository<Account, Long> {
 
     boolean existsByLogin(@NotBlank String login);
 
-    void deleteByLogin(String login);
-
     Page<Account> findAllByForenameAndSurname(Pageable pageable, String forename, String surname);
 
     Page<Account> findAllByCity(Pageable pageable, @NotBlank String city);

@@ -30,7 +30,7 @@ public class Post {
 
     @NotNull
     @Column
-    @Temporal(TemporalType.DATE)
+    @Temporal(TemporalType.TIMESTAMP)
     private Calendar createdAt;
 
     @ManyToOne(fetch = FetchType.LAZY)

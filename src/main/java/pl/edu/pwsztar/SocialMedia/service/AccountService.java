@@ -1,24 +1,31 @@
 package pl.edu.pwsztar.SocialMedia.service;
 
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import pl.edu.pwsztar.SocialMedia.dto.AccountCredentialsDTO;
 import pl.edu.pwsztar.SocialMedia.dto.AccountDTO;
-import pl.edu.pwsztar.SocialMedia.model.Account;
-import pl.edu.pwsztar.SocialMedia.model.Interest;
-import pl.edu.pwsztar.SocialMedia.model.Relationship;
+import pl.edu.pwsztar.SocialMedia.dto.AccountDetailsDTO;
+import pl.edu.pwsztar.SocialMedia.dto.PublicAccountInfo;
 
 import java.util.List;
 
 public interface AccountService {
+
     boolean createAccount(AccountDTO accountDTO);
-    boolean deleteAccount(String login);
+
+    boolean removeAccount(String login);
+
     boolean editAccount(String login, AccountDTO newInfo);
-    Account logIn(AccountCredentialsDTO accountCredentialsDTO);
-    Page<Account> findAccountsByName(Pageable pageable, String forename, String surname);
-    Page<Account> findAccountsByCity(Pageable pageable, String city);
-    Page<Account> findAccountsByCountry(Pageable pageable, String country);
-    Page<Account> findAccountsByInterest(Pageable pageable, Interest interest);
-    Page<Account> findAccountsByInterestAndCity(Pageable pageable, Interest interest, String city);
-    Page<Account> findAccountsByInterestAndCountry(Pageable pageable, Interest interest, String country);
+
+    AccountDetailsDTO getAccountDetails(Long id);
+
+    List<PublicAccountInfo> findAccountsByName(Pageable pageable, String forename, String surname);
+
+    List<PublicAccountInfo> findAccountsByCity(Pageable pageable, String city);
+
+    List<PublicAccountInfo> findAccountsByCountry(Pageable pageable, String country);
+
+    List<PublicAccountInfo> findAccountsByInterest(Pageable pageable, String interest);
+
+    List<PublicAccountInfo> findAccountsByInterestAndCity(Pageable pageable, String interest, String city);
+
+    List<PublicAccountInfo> findAccountsByInterestAndCountry(Pageable pageable, String interest, String country);
 }

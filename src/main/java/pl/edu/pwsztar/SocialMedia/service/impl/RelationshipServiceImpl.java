@@ -2,6 +2,7 @@ package pl.edu.pwsztar.SocialMedia.service.impl;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import pl.edu.pwsztar.SocialMedia.dto.PublicAccountInfo;
 import pl.edu.pwsztar.SocialMedia.model.Account;
 import pl.edu.pwsztar.SocialMedia.model.Relationship;
 import pl.edu.pwsztar.SocialMedia.repository.AccountRepository;
@@ -77,38 +78,38 @@ public class RelationshipServiceImpl implements RelationshipService {
     }
 
     @Override
-    public List<Account> getFriendsList(String login) {
+    public List<PublicAccountInfo> getFriendsList(String login) {
         Account account = accountRepository.findByLogin(login);
         List<Relationship> relationships1 = relationshipRepository.findAllByUserAAndStatus(account, STATUS_FRIENDS);
         List<Relationship> relationships2 = relationshipRepository.findAllByUserBAndStatus(account, STATUS_FRIENDS);
-        List<Account> friends = new ArrayList<>();
+        List<PublicAccountInfo> friends = new ArrayList<>();
         for (Relationship relationship: relationships1) {
-            friends.add(relationship.getUserB());
+            friends.add(new PublicAccountInfo(relationship.getUserB()));
         }
         for (Relationship relationship: relationships2) {
-            friends.add(relationship.getUserA());
+            friends.add(new PublicAccountInfo(relationship.getUserA()));
         }
         return friends;
     }
 
     @Override
-    public List<Account> getReceivedFriendRequests(String login) {
+    public List<PublicAccountInfo> getReceivedFriendRequests(String login) {
         Account account = accountRepository.findByLogin(login);
         List<Relationship> relationships = relationshipRepository.findAllByUserBAndStatus(account, STATUS_PENDING);
-        List<Account> requests = new ArrayList<>();
+        List<PublicAccountInfo> requests = new ArrayList<>();
         for (Relationship relationship: relationships) {
-            requests.add(relationship.getUserA());
+            requests.add(new PublicAccountInfo(relationship.getUserA()));
         }
         return requests;
     }
 
     @Override
-    public List<Account> getSentFriendRequests(String login) {
+    public List<PublicAccountInfo> getSentFriendRequests(String login) {
         Account account = accountRepository.findByLogin(login);
         List<Relationship> relationships = relationshipRepository.findAllByUserAAndStatus(account, STATUS_FRIENDS);
-        List<Account> requests = new ArrayList<>();
+        List<PublicAccountInfo> requests = new ArrayList<>();
         for (Relationship relationship: relationships) {
-            requests.add(relationship.getUserB());
+            requests.add(new PublicAccountInfo(relationship.getUserB()));
         }
         return requests;
     }

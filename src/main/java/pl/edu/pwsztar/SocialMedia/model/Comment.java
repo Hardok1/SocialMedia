@@ -27,7 +27,7 @@ public class Comment {
 
     @NotNull
     @Column
-    @Temporal(TemporalType.DATE)
+    @Temporal(TemporalType.TIMESTAMP)
     private Calendar created_at;
 
     @ManyToOne(fetch = FetchType.LAZY)

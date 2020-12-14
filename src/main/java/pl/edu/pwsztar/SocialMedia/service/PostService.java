@@ -1,16 +1,19 @@
 package pl.edu.pwsztar.SocialMedia.service;
 
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import pl.edu.pwsztar.SocialMedia.model.Account;
-import pl.edu.pwsztar.SocialMedia.model.Post;
+import pl.edu.pwsztar.SocialMedia.dto.PostDTO;
+import pl.edu.pwsztar.SocialMedia.dto.PostDetailsDTO;
 
 import java.util.List;
 
 public interface PostService {
-    Page<Post> getAccountPosts(Pageable pageable, String login);
+    List<PostDTO> getAccountPosts(Pageable pageable, Long accountId);
+
     boolean addPost(String login, String content);
+
     boolean deletePost(String login, Long postId);
+
     boolean editPost(String login, Long postId, String newContent);
-    Post getPost(Long postId);
+
+    PostDetailsDTO getPost(Long postId);
 }

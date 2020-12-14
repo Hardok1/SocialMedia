@@ -3,7 +3,6 @@ package pl.edu.pwsztar.SocialMedia.dto;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import pl.edu.pwsztar.SocialMedia.model.Interest;
 
 import java.util.Set;
 
@@ -17,5 +16,5 @@ public class AccountDTO {
     private String surname;
     private String country;
     private String city;
-    private Set<Interest> interests;
+    private Set<String> interests;
 }

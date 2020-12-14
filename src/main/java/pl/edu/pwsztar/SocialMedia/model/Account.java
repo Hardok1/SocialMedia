@@ -73,13 +73,12 @@ public class Account {
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "userA")
     private Set<Relationship> relationship;
 
-    public Account(AccountDTO accountDTO){
+    public Account(@NotBlank AccountDTO accountDTO){
         this.login = accountDTO.getLogin();
         this.password = accountDTO.getPassword();
         this.forename = accountDTO.getForename();
         this.surname = accountDTO.getSurname();
         this.country = accountDTO.getCountry();
         this.city = accountDTO.getCity();
-        this.interest = accountDTO.getInterests();
     }
 }
