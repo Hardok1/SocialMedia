@@ -46,7 +46,6 @@ public class RelationshipController {
         return new ResponseEntity<>(HttpStatus.CONFLICT);
     }
 
-
     @DeleteMapping("removeRelationshipWithUser/{id}")
     public ResponseEntity<?> removeRelationshipByUser(Authentication authentication, @PathVariable int id) {
         if (relationshipService.removeRelationshipWithUser(authentication.getName(), id)) {
@@ -55,17 +54,14 @@ public class RelationshipController {
         return new ResponseEntity<>(HttpStatus.CONFLICT);
     }
 
-    @GetMapping("isFriend/{id}")
-    public ResponseEntity<?> isFriend(Authentication authentication, @PathVariable int id) {
-        if (relationshipService.isFriend(authentication.getName(), (long) id)) {
-            return new ResponseEntity<>(HttpStatus.OK);
-        }
-        return new ResponseEntity<>(HttpStatus.CONFLICT);
-    }
-
     @GetMapping("getRelationshipStatus/{id}")
     public ResponseEntity<RelationshipStatusDTO> getRelationshipStatus(Authentication authentication, @PathVariable int id) {
         return new ResponseEntity<>(relationshipService.getRelationshipStatus(authentication.getName(),(long) id), HttpStatus.OK);
+    }
+
+    @GetMapping("getFriendsList")
+    public ResponseEntity<List<PublicAccountInfo>> getFriendsList(Authentication authentication) {
+        return new ResponseEntity<>(relationshipService.getFriendsList(authentication.getName()), HttpStatus.OK);
     }
 
     @GetMapping("getReceivedRequests")
