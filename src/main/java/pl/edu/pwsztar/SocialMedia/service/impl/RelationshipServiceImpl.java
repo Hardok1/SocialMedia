@@ -62,16 +62,17 @@ public class RelationshipServiceImpl implements RelationshipService {
         Optional<Relationship> relationship = relationshipRepository.findByUserAAndUserBAndStatus(accountA, accountB, STATUS_PENDING);
         if (relationship.isPresent()){
             relationship.get().setStatus(STATUS_FRIENDS);
-            relationshipRepository.save(relationship.get());
+            relationshipRepository.save(relationship.get());;
             return true;
         } else {
-            relationship = relationshipRepository.findByUserBAndUserAAndStatus(accountB, accountA, STATUS_PENDING);
+            relationship = relationshipRepository.findByUserBAndUserAAndStatus(accountA, accountB, STATUS_PENDING);
             if (relationship.isPresent()){
                 relationship.get().setStatus(STATUS_FRIENDS);
                 relationshipRepository.save(relationship.get());
                 return true;
             }
         }
+        System.out.println("NIE");
         return false;
     }
 
@@ -94,7 +95,7 @@ public class RelationshipServiceImpl implements RelationshipService {
             relationshipRepository.delete(relationship.get());
             return true;
         } else {
-            relationship = relationshipRepository.findByUserBAndUserA(accountB, accountA);
+            relationship = relationshipRepository.findByUserBAndUserA(accountA, accountB);
             if (relationship.isPresent()){
                 relationshipRepository.delete(relationship.get());
                 return true;
@@ -111,7 +112,7 @@ public class RelationshipServiceImpl implements RelationshipService {
         if (relationship.isPresent()){
             return true;
         } else {
-            relationship = relationshipRepository.findByUserBAndUserAAndStatus(accountB, accountA, STATUS_FRIENDS);
+            relationship = relationshipRepository.findByUserBAndUserAAndStatus(accountA, accountB, STATUS_FRIENDS);
             return relationship.isPresent();
         }
     }
@@ -121,12 +122,13 @@ public class RelationshipServiceImpl implements RelationshipService {
         RelationshipStatusDTO relationshipStatusDTO = new RelationshipStatusDTO();
         if (isFriend(login,userB)){
             relationshipStatusDTO.setStatus("friend");
+            return relationshipStatusDTO;
         }
         Account accountA = accountRepository.findByLogin(login);
         Account accountB = accountRepository.getOne(userB);
         if (relationshipRepository.findByUserAAndUserBAndStatus(accountA, accountB, STATUS_PENDING).isPresent()){
             relationshipStatusDTO.setStatus("invited");
-        } else if (relationshipRepository.findByUserBAndUserAAndStatus(accountB, accountA, STATUS_PENDING).isPresent()){
+        } else if (relationshipRepository.findByUserBAndUserAAndStatus(accountA, accountB, STATUS_PENDING).isPresent()){
             relationshipStatusDTO.setStatus("requested");
         } else {
             relationshipStatusDTO.setStatus("stranger");
