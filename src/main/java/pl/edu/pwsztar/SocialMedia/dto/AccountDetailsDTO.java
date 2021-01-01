@@ -18,13 +18,12 @@ public class AccountDetailsDTO {
     private String country;
     private String city;
     private Set<String> interests;
-    private Set<Post> posts;
 
     public AccountDetailsDTO(Account account) {
         this.id = account.getId();
         this.forename = account.getForename();
         this.surname = account.getSurname();
         this.country = account.getCountry();
-        this.posts = account.getPosts();
+        this.city = account.getCity();
     }
 }

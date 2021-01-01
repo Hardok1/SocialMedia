@@ -3,6 +3,7 @@ package pl.edu.pwsztar.SocialMedia.service.impl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import pl.edu.pwsztar.SocialMedia.dto.PublicAccountInfo;
+import pl.edu.pwsztar.SocialMedia.dto.RelationshipStatusDTO;
 import pl.edu.pwsztar.SocialMedia.model.Account;
 import pl.edu.pwsztar.SocialMedia.model.Relationship;
 import pl.edu.pwsztar.SocialMedia.repository.AccountRepository;
@@ -44,7 +45,7 @@ public class RelationshipServiceImpl implements RelationshipService {
     }
 
     @Override
-    public boolean acceptFriendRequest(Long relationshipId) {
+    public boolean acceptFriendRequestById(Long relationshipId) {
         Optional<Relationship> relationship = relationshipRepository.findById(relationshipId);
         if (relationship.isPresent()){
             relationship.get().setStatus(STATUS_FRIENDS);
@@ -55,7 +56,27 @@ public class RelationshipServiceImpl implements RelationshipService {
     }
 
     @Override
-    public boolean removeRelationship(Long relationshipId) {
+    public boolean acceptFriendRequestByUser(String login, int id) {
+        Account accountA = accountRepository.findByLogin(login);
+        Account accountB = accountRepository.getOne((long) id);
+        Optional<Relationship> relationship = relationshipRepository.findByUserAAndUserBAndStatus(accountA, accountB, STATUS_PENDING);
+        if (relationship.isPresent()){
+            relationship.get().setStatus(STATUS_FRIENDS);
+            relationshipRepository.save(relationship.get());
+            return true;
+        } else {
+            relationship = relationshipRepository.findByUserBAndUserAAndStatus(accountB, accountA, STATUS_PENDING);
+            if (relationship.isPresent()){
+                relationship.get().setStatus(STATUS_FRIENDS);
+                relationshipRepository.save(relationship.get());
+                return true;
+            }
+        }
+        return false;
+    }
+
+    @Override
+    public boolean removeRelationshipById(Long relationshipId) {
         Optional<Relationship> relationship = relationshipRepository.findById(relationshipId);
         if (relationship.isPresent()){
             relationshipRepository.delete(relationship.get());
@@ -65,16 +86,52 @@ public class RelationshipServiceImpl implements RelationshipService {
     }
 
     @Override
+    public boolean removeRelationshipWithUser(String login, int id) {
+        Account accountA = accountRepository.findByLogin(login);
+        Account accountB = accountRepository.getOne((long) id);
+        Optional<Relationship> relationship = relationshipRepository.findByUserAAndUserB(accountA, accountB);
+        if (relationship.isPresent()){
+            relationshipRepository.delete(relationship.get());
+            return true;
+        } else {
+            relationship = relationshipRepository.findByUserBAndUserA(accountB, accountA);
+            if (relationship.isPresent()){
+                relationshipRepository.delete(relationship.get());
+                return true;
+            }
+        }
+        return false;
+    }
+
+    @Override
     public boolean isFriend(String login, Long userB) {
         Account accountA = accountRepository.findByLogin(login);
         Account accountB = accountRepository.getOne(userB);
-        Optional<Relationship> relationship1 = relationshipRepository.findByUserAAndUserBAndStatus(accountA, accountB, STATUS_FRIENDS);
-        if (relationship1.isPresent()){
+        Optional<Relationship> relationship = relationshipRepository.findByUserAAndUserBAndStatus(accountA, accountB, STATUS_FRIENDS);
+        if (relationship.isPresent()){
             return true;
         } else {
-            Optional<Relationship> relationship2 = relationshipRepository.findByUserBAndUserAAndStatus(accountB, accountA, STATUS_FRIENDS);
-            return relationship2.isPresent();
+            relationship = relationshipRepository.findByUserBAndUserAAndStatus(accountB, accountA, STATUS_FRIENDS);
+            return relationship.isPresent();
         }
+    }
+
+    @Override
+    public RelationshipStatusDTO getRelationshipStatus(String login, Long userB) {
+        RelationshipStatusDTO relationshipStatusDTO = new RelationshipStatusDTO();
+        if (isFriend(login,userB)){
+            relationshipStatusDTO.setStatus("friend");
+        }
+        Account accountA = accountRepository.findByLogin(login);
+        Account accountB = accountRepository.getOne(userB);
+        if (relationshipRepository.findByUserAAndUserBAndStatus(accountA, accountB, STATUS_PENDING).isPresent()){
+            relationshipStatusDTO.setStatus("invited");
+        } else if (relationshipRepository.findByUserBAndUserAAndStatus(accountB, accountA, STATUS_PENDING).isPresent()){
+            relationshipStatusDTO.setStatus("requested");
+        } else {
+            relationshipStatusDTO.setStatus("stranger");
+        }
+        return relationshipStatusDTO;
     }
 
     @Override

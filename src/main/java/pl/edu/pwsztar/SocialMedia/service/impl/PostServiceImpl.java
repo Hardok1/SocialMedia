@@ -15,6 +15,7 @@ import pl.edu.pwsztar.SocialMedia.repository.AccountRepository;
 import pl.edu.pwsztar.SocialMedia.repository.PostRepository;
 import pl.edu.pwsztar.SocialMedia.service.PostService;
 
+import java.text.SimpleDateFormat;
 import java.util.*;
 
 @Service
@@ -31,10 +32,11 @@ public class PostServiceImpl implements PostService {
 
     @Override
     public List<PostDTO> getAccountPosts(Pageable pageable, Long accountId) {
-        Page<Post> posts = postRepository.findAllByOriginalPoster(pageable, accountRepository.getOne(accountId));
+        Page<Post> posts = postRepository.findAllByOriginalPosterOrderByCreatedAtDesc(pageable, accountRepository.getOne(accountId));
         List<PostDTO> postDTOS = new ArrayList<>();
+        SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss");
         for (Post post : posts.getContent()) {
-            postDTOS.add(new PostDTO(post.getId(), post.getContent(), post.getCreatedAt()));
+            postDTOS.add(new PostDTO(post.getId(), post.getContent(), formatter.format(post.getCreatedAt().getTime())));
         }
         return postDTOS;
     }
@@ -45,7 +47,6 @@ public class PostServiceImpl implements PostService {
             Post post = new Post();
             post.setContent(content);
             post.setCreatedAt(Calendar.getInstance(TimeZone.getTimeZone("Poland")));
-            System.out.println(post.getCreatedAt().getTime());
             post.setOriginalPoster(accountRepository.findByLogin(login));
             postRepository.save(post);
             return true;
@@ -82,11 +83,12 @@ public class PostServiceImpl implements PostService {
     public PostDetailsDTO getPost(Long postId) {
         Post post = postRepository.getOne(postId);
         Set<CommentDTO> commentDTOS = new HashSet<>();
+        SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss");
         for (Comment comment : post.getComment()) {
             Account author = comment.getAuthor();
             PublicAccountInfo account = new PublicAccountInfo(author.getId(), author.getForename(), author.getSurname(), author.getCountry(), author.getCity());
-            commentDTOS.add(new CommentDTO(comment.getId(), comment.getContent(), comment.getCreated_at(), account));
+            commentDTOS.add(new CommentDTO(comment.getId(), comment.getContent(), formatter.format(comment.getCreated_at().getTime()), account));
         }
-        return new PostDetailsDTO(post.getId(), post.getContent(), post.getCreatedAt(), commentDTOS);
+        return new PostDetailsDTO(post.getId(), post.getContent(), formatter.format(post.getCreatedAt().getTime()), commentDTOS);
     }
 }

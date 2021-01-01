@@ -6,6 +6,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 import pl.edu.pwsztar.SocialMedia.dto.PublicAccountInfo;
+import pl.edu.pwsztar.SocialMedia.dto.RelationshipStatusDTO;
 import pl.edu.pwsztar.SocialMedia.service.RelationshipService;
 
 import java.util.List;
@@ -20,14 +21,14 @@ public class RelationshipController {
         this.relationshipService = relationshipService;
     }
 
-    @GetMapping("test")
-    public ResponseEntity<?> reltest(){
-        //ExpiredJwtException
-        if (relationshipService.acceptFriendRequest((long) 14)){
-            return new ResponseEntity<>(HttpStatus.CREATED);
-        }
-        return new ResponseEntity<>(HttpStatus.CONFLICT);
-    }
+//    @GetMapping("test")
+//    public ResponseEntity<?> reltest(){
+//        //ExpiredJwtException
+//        if (relationshipService.acceptFriendRequestById((long) 14)){
+//            return new ResponseEntity<>(HttpStatus.CREATED);
+//        }
+//        return new ResponseEntity<>(HttpStatus.CONFLICT);
+//    }
 
     @PostMapping("sendRequest/{id}")
     public ResponseEntity<?> sendFriendRequest(Authentication authentication, @PathVariable int id) {
@@ -37,33 +38,34 @@ public class RelationshipController {
         return new ResponseEntity<>(HttpStatus.CONFLICT);
     }
 
-    @PostMapping("acceptRequest/{id}")
-    public ResponseEntity<?> acceptFriendRequest(@PathVariable int id) {
-        if (relationshipService.acceptFriendRequest((long) id)) {
+    @PostMapping("acceptRequestByUser/{id}")
+    public ResponseEntity<?> acceptFriendRequestByUser(Authentication authentication, @PathVariable int id) {
+        if (relationshipService.acceptFriendRequestByUser(authentication.getName(), id)) {
             return new ResponseEntity<>(HttpStatus.OK);
         }
         return new ResponseEntity<>(HttpStatus.CONFLICT);
     }
 
-    @PostMapping("removeRelationship/{id}")
-    public ResponseEntity<?> removeRelationship(@PathVariable int id) {
-        if (relationshipService.removeRelationship((long) id)) {
+
+    @DeleteMapping("removeRelationshipWithUser/{id}")
+    public ResponseEntity<?> removeRelationshipByUser(Authentication authentication, @PathVariable int id) {
+        if (relationshipService.removeRelationshipWithUser(authentication.getName(), id)) {
             return new ResponseEntity<>(HttpStatus.OK);
         }
         return new ResponseEntity<>(HttpStatus.CONFLICT);
     }
 
-    @GetMapping("checkFriendship/{id}")
-    public ResponseEntity<?> checkFriendship(Authentication authentication, @PathVariable int id) {
+    @GetMapping("isFriend/{id}")
+    public ResponseEntity<?> isFriend(Authentication authentication, @PathVariable int id) {
         if (relationshipService.isFriend(authentication.getName(), (long) id)) {
             return new ResponseEntity<>(HttpStatus.OK);
         }
         return new ResponseEntity<>(HttpStatus.CONFLICT);
     }
 
-    @GetMapping("getFriendsList")
-    public ResponseEntity<List<PublicAccountInfo>> getFriendsList(Authentication authentication) {
-        return new ResponseEntity<>(relationshipService.getFriendsList(authentication.getName()), HttpStatus.OK);
+    @GetMapping("getRelationshipStatus/{id}")
+    public ResponseEntity<RelationshipStatusDTO> getRelationshipStatus(Authentication authentication, @PathVariable int id) {
+        return new ResponseEntity<>(relationshipService.getRelationshipStatus(authentication.getName(),(long) id), HttpStatus.OK);
     }
 
     @GetMapping("getReceivedRequests")

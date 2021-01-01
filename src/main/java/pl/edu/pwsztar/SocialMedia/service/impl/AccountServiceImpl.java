@@ -64,24 +64,35 @@ public class AccountServiceImpl implements AccountService {
     public boolean editAccount(String login, AccountDTO newInfo) {
         try {
             Account account = accountRepository.findByLogin(login);
-            if (!newInfo.getForename().isEmpty()) {
+            if (!(null == newInfo.getForename() || newInfo.getForename().isEmpty())) {
                 account.setForename(newInfo.getForename());
             }
-            if (!newInfo.getSurname().isEmpty()) {
+            if (!(null == newInfo.getSurname() || newInfo.getSurname().isEmpty())) {
                 account.setSurname(newInfo.getSurname());
             }
-            if (!newInfo.getSurname().isEmpty()) {
+            if (!(null == newInfo.getCity() || newInfo.getCity().isEmpty())) {
                 account.setCity(newInfo.getCity());
             }
-            account.setCountry(newInfo.getCountry());
-            account.setPassword(newInfo.getPassword());
-            account.setInterest(convertInterestsListFromNames(newInfo.getInterests()));
+            if (!(null == newInfo.getCountry() || newInfo.getCountry().isEmpty())) {
+                account.setCountry(newInfo.getCountry());
+            }
+            if (!(null == newInfo.getPassword() || newInfo.getPassword().isEmpty())) {
+                account.setPassword(newInfo.getPassword());
+            }
+            if (!(null == newInfo.getInterests() || newInfo.getInterests().isEmpty())) {
+                account.setInterest(convertInterestsListFromNames(newInfo.getInterests()));
+            }
             accountRepository.save(account);
             return true;
         } catch (Exception e) {
             e.printStackTrace();
             return false;
         }
+    }
+
+    @Override
+    public Long getAccountId(String login) {
+        return accountRepository.findByLogin(login).getId();
     }
 
     @Override
@@ -97,6 +108,11 @@ public class AccountServiceImpl implements AccountService {
             return accountDetails;
         }
         return new AccountDetailsDTO();
+    }
+
+    @Override
+    public AccountDetailsDTO getMyAccountDetails(String name) {
+        return getAccountDetails(accountRepository.findByLogin(name).getId());
     }
 
     private List<PublicAccountInfo> convertAccountToPublicAccountInfo(List<Account> accounts) {

@@ -7,8 +7,6 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class PostDTO {
-    private long id;
-    private String content;
-    private String createdAt;
+public class RelationshipStatusDTO {
+    String status;
 }

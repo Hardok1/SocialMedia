@@ -8,5 +8,5 @@ import pl.edu.pwsztar.SocialMedia.model.Post;
 
 public interface PostRepository extends JpaRepository<Post, Long> {
 
-    Page<Post> findAllByOriginalPoster(Pageable pageable, Account originalPoster);
+    Page<Post> findAllByOriginalPosterOrderByCreatedAtDesc(Pageable pageable, Account originalPoster);
 }

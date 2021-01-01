@@ -15,7 +15,11 @@ public interface AccountService {
 
     boolean editAccount(String login, AccountDTO newInfo);
 
+    Long getAccountId(String login);
+
     AccountDetailsDTO getAccountDetails(Long id);
+
+    AccountDetailsDTO getMyAccountDetails(String name);
 
     List<PublicAccountInfo> findAccountsByName(Pageable pageable, String forename, String surname);
 

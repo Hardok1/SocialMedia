@@ -12,6 +12,6 @@ import java.util.Calendar;
 public class CommentDTO {
     private long id;
     private String content;
-    private Calendar createdAt;
+    private String createdAt;
     private PublicAccountInfo author;
 }

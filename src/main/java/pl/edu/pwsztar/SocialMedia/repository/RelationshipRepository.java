@@ -9,6 +9,10 @@ import java.util.Optional;
 
 public interface RelationshipRepository extends JpaRepository<Relationship, Long> {
 
+    Optional<Relationship> findByUserAAndUserB(Account userA, Account userB);
+
+    Optional<Relationship> findByUserBAndUserA(Account userB, Account userA);
+
     List<Relationship> findAllByUserAAndStatus(Account userA, String status);
 
     List<Relationship> findAllByUserBAndStatus(Account userB, String status);

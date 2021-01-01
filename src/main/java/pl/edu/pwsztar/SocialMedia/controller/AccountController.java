@@ -13,6 +13,7 @@ import pl.edu.pwsztar.SocialMedia.dto.AccountDetailsDTO;
 import pl.edu.pwsztar.SocialMedia.dto.PublicAccountInfo;
 import pl.edu.pwsztar.SocialMedia.service.AccountService;
 
+import javax.servlet.http.HttpServletResponse;
 import java.util.List;
 
 @RestController
@@ -45,16 +46,30 @@ public class AccountController {
     }
 
     @PutMapping("edit")
-    public ResponseEntity<?> editAccount(Authentication authentication, AccountDTO accountDTO) {
+    public ResponseEntity<?> editAccount(Authentication authentication, @RequestBody AccountDTO accountDTO) {
+        if (!(null == accountDTO.getPassword() || accountDTO.getPassword().isEmpty())) {
+            accountDTO.setPassword(passwordEncoder.encode(accountDTO.getPassword()));
+        }
         if (accountService.editAccount(authentication.getName(), accountDTO)) {
             return new ResponseEntity<>(HttpStatus.OK);
         }
         return new ResponseEntity<>(HttpStatus.CONFLICT);
     }
 
+    @GetMapping("getId")
+    public String getAccountId(Authentication authentication){
+        return String.valueOf(accountService.getAccountId(authentication.getName()));
+    }
+
     @GetMapping("{id}")
     public ResponseEntity<AccountDetailsDTO> getAccountDetails(@PathVariable int id) {
         AccountDetailsDTO accountDetails = accountService.getAccountDetails((long) id);
+        return new ResponseEntity<>(accountDetails, HttpStatus.OK);
+    }
+
+    @GetMapping
+    public ResponseEntity<AccountDetailsDTO> getMyAccountDetails(Authentication authentication) {
+        AccountDetailsDTO accountDetails = accountService.getMyAccountDetails(authentication.getName());
         return new ResponseEntity<>(accountDetails, HttpStatus.OK);
     }
 
@@ -92,5 +107,11 @@ public class AccountController {
     public ResponseEntity<List<PublicAccountInfo>> findAccountsByInterestAndCountry(@RequestParam int page, @RequestParam String interest, @RequestParam String country) {
         Pageable pageable = PageRequest.of(page, 10);
         return new ResponseEntity<>(accountService.findAccountsByInterestAndCountry(pageable, interest, country), HttpStatus.OK);
+    }
+
+    //TODO: implementacja
+    @GetMapping("isTokenActive")
+    public ResponseEntity<?> isTokenActive(Authentication authentication){
+        return null;
     }
 }

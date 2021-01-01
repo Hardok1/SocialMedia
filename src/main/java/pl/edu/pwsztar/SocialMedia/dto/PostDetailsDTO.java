@@ -13,6 +13,6 @@ import java.util.Set;
 public class PostDetailsDTO {
     private long id;
     private String content;
-    private Calendar createdAt;
+    private String createdAt;
     private Set<CommentDTO> comments;
 }
