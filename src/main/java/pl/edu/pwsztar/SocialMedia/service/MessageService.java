@@ -5,7 +5,7 @@ import pl.edu.pwsztar.SocialMedia.dto.MessageDTO;
 import java.util.List;
 
 public interface MessageService {
-    boolean addMessage(String name, String content);
+    boolean addMessage(long id, String name, String content);
 
-    List<MessageDTO> getMessages(long id);
+    List<MessageDTO> getMessages(long id, String name);
 }

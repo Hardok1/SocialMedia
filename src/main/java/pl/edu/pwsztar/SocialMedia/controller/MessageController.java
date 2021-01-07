@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import pl.edu.pwsztar.SocialMedia.dto.MessageDTO;
+import pl.edu.pwsztar.SocialMedia.repository.AccountRepository;
 import pl.edu.pwsztar.SocialMedia.service.MessageService;
 
 import java.util.List;
@@ -19,24 +20,28 @@ import java.util.List;
 @RequestMapping("/message/")
 public class MessageController {
 
+    private final AccountRepository accountRepository;
     private final MessageService messageService;
     private final FcmController fcmController;
 
     @Autowired
-    public MessageController(MessageService postService, FcmController fcmController) {
+    public MessageController(MessageService postService, FcmController fcmController, AccountRepository accountRepository) {
         this.messageService = postService;
         this.fcmController = fcmController;
+        this.accountRepository = accountRepository;
     }
 
     @GetMapping("get/{id}")
-    public ResponseEntity<List<MessageDTO>> getMessages(@PathVariable int id) {
-        return new ResponseEntity<>(messageService.getMessages((long) id), HttpStatus.OK);
+    public ResponseEntity<List<MessageDTO>> getMessages(@PathVariable int id, Authentication authentication) {
+        return new ResponseEntity<>(messageService.getMessages((long) id, authentication.getName()), HttpStatus.OK);
     }
 
-    @PostMapping("add")
-    public ResponseEntity<?> addMessage(Authentication authentication, @RequestBody MessageDTO messageDTO){
-        if (messageService.addMessage(authentication.getName(), messageDTO.getContent())){
-            fcmController.send(messageDTO.getFcmChatId(), messageDTO.getContent());
+    @PostMapping("add/{id}")
+    public ResponseEntity<?> addMessage(@PathVariable int id, Authentication authentication, @RequestBody MessageDTO messageDTO) {
+        if (messageService.addMessage((long) id, authentication.getName(), messageDTO.getContent())) {
+            Long id1 = accountRepository.findByLogin(authentication.getName()).getId();
+            String chatFcmId = id1 > id ? (id + "_" + id1) : (id1 + "_" + id);
+            fcmController.send(chatFcmId, messageDTO.getContent());
             return new ResponseEntity<>(HttpStatus.CREATED);
         }
         return new ResponseEntity<>(HttpStatus.CONFLICT);

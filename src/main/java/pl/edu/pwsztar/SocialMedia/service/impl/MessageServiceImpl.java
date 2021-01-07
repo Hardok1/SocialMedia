@@ -31,9 +31,17 @@ public class MessageServiceImpl implements MessageService {
     }
 
     @Override
-    public boolean addMessage(String name, String content) {
+    public boolean addMessage(long id1, String name, String content) {
         try {
+            Long id2 = accountRepository.findByLogin(name).getId();
+            Chat chat;
+            if(id1 > id2) {
+                chat = chatRepository.findChatByMember1IdAndMember2Id(id2, id1);
+            } else {
+                chat = chatRepository.findChatByMember1IdAndMember2Id(id1, id2);
+            }
             messageRepository.save(Message.builder()
+                    .chat(chat)
                     .createdAt(Calendar.getInstance(TimeZone.getTimeZone("Poland")))
                     .content(content)
                     .sender(accountRepository.findByLogin(name))
@@ -45,16 +53,19 @@ public class MessageServiceImpl implements MessageService {
     }
 
     @Override
-    public List<MessageDTO> getMessages(long id) {
-        Chat one = chatRepository.getOne(id);
-        List<Message> allByChat = messageRepository.findAllByChat(one);
+    public List<MessageDTO> getMessages(long id1, String name) {
+        Long id2 = accountRepository.findByLogin(name).getId();
+        Chat chat;
+        if(id1 > id2) {
+            chat = chatRepository.findChatByMember1IdAndMember2Id(id2, id1);
+        } else {
+            chat = chatRepository.findChatByMember1IdAndMember2Id(id1, id2);
+        }
+        List<Message> allByChat = messageRepository.findAllByChatOrderByCreatedAtDesc(chat);
         List<MessageDTO> messageDTOs = new ArrayList<>();
         SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss");
-        Long id1 = one.getMember1().getId();
-        Long id2 = one.getMember2().getId();
-        String chatFcmId = id1 > id2 ? (id2 + "," + id1) : (id1 + "," + id2);
         for (Message message : allByChat) {
-            messageDTOs.add(new MessageDTO(chatFcmId, message.getContent(), formatter.format(message.getCreatedAt().getTime()), message.getSender().getForename() + message.getSender().getSurname()));
+            messageDTOs.add(new MessageDTO(message.getContent(), formatter.format(message.getCreatedAt().getTime()), message.getSender().getForename() + message.getSender().getSurname()));
         }
         return messageDTOs;
     }

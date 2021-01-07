@@ -24,40 +24,28 @@ public class FcmController {
     public ResponseEntity<String> send(String topic, String content) throws JSONException {
 
         JSONObject body = new JSONObject();
-        body.put("to", "/chat/" + topic);
+        body.put("to", "/topics/" + topic);
         body.put("priority", "high");
 
-        JSONObject notification = new JSONObject();
-        notification.put("title", "Przyszła nowa wiadomość");
-        notification.put("body", content);
+//        JSONObject notification = new JSONObject();
+//        notification.put("title", "New message");
+//        notification.put("body", content);
 
         JSONObject data = new JSONObject();
         data.put("content", content);
 
-        body.put("notification", notification);
+//        body.put("notification", notification);
         body.put("data", data);
 
-/**
- {
- "notification": {
- "title": "Przyszła nowa wiadomość",
- "body": "message content"
- },
- "data": {
- "content": "content"
- },
- "to": "/chat/{id1},{id2}",
- "priority": "high"
- }
- */
-
         HttpEntity<String> request = new HttpEntity<>(body.toString());
+        System.out.println("firebase request: " + body);
 
         CompletableFuture<String> pushNotification = pushNotificationService.send(request);
         CompletableFuture.allOf(pushNotification).join();
 
         try {
             String firebaseResponse = pushNotification.get();
+            System.out.println("firebase response: " + firebaseResponse);
 
             return new ResponseEntity<>(firebaseResponse, HttpStatus.OK);
         } catch (InterruptedException e) {

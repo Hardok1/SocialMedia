@@ -8,7 +8,6 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class MessageDTO {
-    private String fcmChatId;
     private String content;
     private String createdAt;
     private String name;
